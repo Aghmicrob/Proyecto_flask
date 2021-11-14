@@ -10,4 +10,6 @@ FICHERO=""
 #TAMBIEN NECESITARAS CREAR UNA SECRET_KEY Y METERLA EN LA VARIABLE DEL MISMO NOMBRE, ASI COMO UNA APIKEY que sera proporcionada al hacerte una cuenta en coinmarketap 
 SECRET_KEY=""
 
-apikey=""
+apikey="" 
+
+#si por cuestiones de testing de la aplicacion se necesita verlo y no se tiene clave api, se puede utilizar esta: f892e6e1-beb2-4c50-8a44-1dfae22119b4

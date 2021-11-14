@@ -1,7 +1,7 @@
 import json
 import sqlite3
 
-from config import FICHERO
+from config import FICHERO,APIKEY
 from requests import Session
 import requests
 import json
@@ -206,32 +206,30 @@ class Dbmanager():
             return False
 class Apimanager():
     def __init__(self):
-        self.urlc="https://pro-api.coinmarketcap.com/v1/tools/price-conversion?amount={}&symbol={}&convert={}&CMC_PRO_API_KEY=f892e6e1-beb2-4c50-8a44-1dfae22119b4"
-        self.urlp="https://pro-api.coinmarketcap.com/v1/tools/price-conversion?amount={}&symbol={}&convert=EUR&CMC_PRO_API_KEY=f892e6e1-beb2-4c50-8a44-1dfae22119b4"
+        self.apikey=APIKEY
+        self.urlc="https://pro-api.coinmarketcap.com/v1/tools/price-conversion?amount={}&symbol={}&convert={}&CMC_PRO_API_KEY={}"
+        self.urlp="https://pro-api.coinmarketcap.com/v1/tools/price-conversion?amount={}&symbol={}&convert=EUR&CMC_PRO_API_KEY={}"
         self.headers={
             'accepts' : 'application/json'
         }
     def compara(self,cantidad,moneda1,moneda2):
         moneda1=str(moneda1)
         moneda2=str(moneda2)
-        url=self.urlc.format(cantidad,moneda1,moneda2)
+        url=self.urlc.format(cantidad,moneda1,moneda2,self.apikey)
         session=Session()
         session.headers.update(self.headers)
         respuesta=requests.get(url)
         data_dict=json.loads(respuesta.text)
         valor=data_dict["data"]["quote"][moneda2]["price"]
         return valor
-    def p_api(self):
+    def p_api(self,cantidad,moneda1,moneda2):
         try:
-            cantidad=1
-            moneda1="EUR"
-            moneda2="BTC"
             self.compara(cantidad,moneda1,moneda2)
             return True
         except:
             return False
     def valor(self,cryptomoneda,cantidad):
-        url= self.urlp.format(cantidad,cryptomoneda)
+        url= self.urlp.format(cantidad,cryptomoneda,self.apikey)
         session=Session()
         session.headers.update(self.headers)
         respuesta=requests.get(url)

@@ -33,7 +33,7 @@ def nueva_transaccion():
         return render_template("compra.html",el_formulario=formulario)
     elif formulario.calcular.data:
         if formulario.validate_on_submit():
-            if api.p_api() ==False or dbmanager.p_crypto_monedero()==False:
+            if api.p_api(request.form["moneda_inicial_Q"],request.form["moneda_inicial"],request.form["moneda_final"]) ==False or dbmanager.p_crypto_monedero()==False:
                 mensaje="error conexion api/base de datos"
                 return render_template("compra.html",el_formulario=formulario,mensajes=mensaje)
             elif request.form["moneda_inicial"] == request.form["moneda_final"]:
@@ -102,11 +102,11 @@ def status():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(e):
     return render_template("error.html")
     
 
-@app.errorhandler(500)
-def server_error():
+@app.errorhandler(500) 
+def server_error(e):
     return render_template("error.html")
 
