@@ -32,7 +32,8 @@ def nueva_transaccion():
     if request.method== "GET":
         return render_template("compra.html",el_formulario=formulario)
     elif formulario.calcular.data:
-        if formulario.validate_on_submit():
+        caracteres_prohibidos=("INF","inf","infinity","INFINITY")
+        if formulario.validate_on_submit() and request.form["moneda_final_Q"] not in caracteres_prohibidos and request.form["moneda_inicial_Q"] not in caracteres_prohibidos and request.form["precio_unitario"] not in caracteres_prohibidos:
             if api.p_api(request.form["moneda_inicial_Q"],request.form["moneda_inicial"],request.form["moneda_final"]) ==False or dbmanager.p_crypto_monedero()==False:
                 mensaje="error conexion api/base de datos"
                 return render_template("compra.html",el_formulario=formulario,mensajes=mensaje)
@@ -59,7 +60,8 @@ def nueva_transaccion():
             mensaje="error al rellenar formulario, vuelva al inicio y rellenelo otra vez"
             return render_template("compra.html",el_formulario=formulario,mensajes=mensaje)
     elif formulario.comprar.data:
-        if formulario.validate_on_submit():
+        caracteres_prohibidos=("INF","inf","infinity","INFINITY")
+        if formulario.validate_on_submit() and request.form["moneda_final_Q"] not in caracteres_prohibidos and request.form["moneda_inicial_Q"] not in caracteres_prohibidos and request.form["precio_unitario"] not in caracteres_prohibidos:
             formulario_datos=request.form
             if dbmanager.p_escribebase(formulario_datos)==False or dbmanager.p_sumamonedero()== False:
                 mensaje="ha habido un problema con el acceso a la base de datos"
