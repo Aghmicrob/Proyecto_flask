@@ -4,6 +4,7 @@ from flask_wtf import *
 from werkzeug.utils import bind_arguments, redirect
 from wtforms import *
 from wtforms.widgets.core import SubmitInput
+from werkzeug.exceptions import InternalServerError
 
 from crypto import app
 from crypto.forms import Formulario
@@ -25,7 +26,6 @@ def inicio():
     else: 
         movimientos=dbmanager.registro()
         return render_template("index.html", items=movimientos)
-
 @app.route('/compra', methods=["GET", "POST"])
 def nueva_transaccion():
     formulario=Formulario()
@@ -60,7 +60,7 @@ def nueva_transaccion():
             mensaje="error al rellenar formulario, vuelva al inicio y rellenelo otra vez"
             return render_template("compra.html",el_formulario=formulario,mensajes=mensaje)
     elif formulario.comprar.data:
-        caracteres_prohibidos=("INF","inf","infinity","INFINITY")
+        caracteres_prohibidos=("inf","infinity","INFINITY")
         if formulario.validate_on_submit() and request.form["moneda_final_Q"] not in caracteres_prohibidos and request.form["moneda_inicial_Q"] not in caracteres_prohibidos and request.form["precio_unitario"] not in caracteres_prohibidos:
             formulario_datos=request.form
             if dbmanager.p_escribebase(formulario_datos)==False or dbmanager.p_sumamonedero()== False:
@@ -103,12 +103,18 @@ def status():
             return render_template("status.html",total=total,valor_actual=valor_inversion,cryptos=miramonedero)
 
 
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("error.html")
     
-
-@app.errorhandler(500) 
-def server_error(e):
-    return render_template("error.html")
+@app.errorhandler(InternalServerError) 
+def handle_500(e):
+    original = getattr(e, "original_exception", None)
+    if original is None:
+        # direct 500 error, such as abort(500)
+        return render_template("error.html"), 500
+    # wrapped unhandled error
+    return render_template("error.html", e=original), 500
 
